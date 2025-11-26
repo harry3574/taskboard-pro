@@ -17,15 +17,21 @@ export class TaskService {
   ];
 
   private tasksSubject = new BehaviorSubject<Task[]>([...this.tasks]);
-
-  tasks$: Observable<Task[]> = this.tasksSubject.asObservable();
+  tasks$ = this.tasksSubject.asObservable();
 
   addTask(title: string) {
     const newTask: Task = {
       id: this.tasks.length + 1,
       title
     };
+
     this.tasks.push(newTask);
     this.tasksSubject.next([...this.tasks]);
   }
+
+  removeTask(id: number) {
+    this.tasks = this.tasks.filter(t => t.id !== id);
+    this.tasksSubject.next([...this.tasks]);
+  }
 }
+

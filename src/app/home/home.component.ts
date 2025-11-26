@@ -36,6 +36,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.stopCounting();
   }
 
+  removeTask(id: number) {
+  this.taskService.removeTask(id);
+}
+
   startCounting() {
     this.intervalId = setInterval(() => {
       this.count++;
