@@ -1,8 +1,12 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { AboutComponent } from './about/about.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },          // default route
-  { path: 'about', component: AboutComponent },    // second route
+  {
+    path: '',
+    loadChildren: () => import('./home/home.routes')
+  },
+  {
+    path: 'about',
+    loadChildren: () => import('./about/about.routes')
+  }
 ];
