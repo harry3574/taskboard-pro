@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 export interface Task {
   id: number;
@@ -13,12 +13,19 @@ export class TaskService {
 
   private tasks: Task[] = [
     { id: 1, title: 'Buy groceries' },
-    { id: 2, title: 'Learn Angular routing' },
-    { id: 3, title: 'Work on project' },
-    { id: 4, title: 'Idk just go do something'}
+    { id: 2, title: 'Learn Angular routing' }
   ];
 
-  getTasks(): Observable<Task[]> {
-    return of(this.tasks);
+  private tasksSubject = new BehaviorSubject<Task[]>([...this.tasks]);
+
+  tasks$: Observable<Task[]> = this.tasksSubject.asObservable();
+
+  addTask(title: string) {
+    const newTask: Task = {
+      id: this.tasks.length + 1,
+      title
+    };
+    this.tasks.push(newTask);
+    this.tasksSubject.next([...this.tasks]);
   }
 }

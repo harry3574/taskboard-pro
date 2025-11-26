@@ -5,3 +5,12 @@
     {{ task.id }} – {{ task.title }}
   </li>
 </ul>
+
+<input type="text" [(ngModel)]="newTaskTitle" placeholder="Nouvelle tâche" />
+<button (click)="addTask()">Ajouter</button>
+
+<hr>
+
+<h2>Compteur de temps</h2>
+<p>Temps écoulé : {{ count / 2 }} secondes</p>
+<button (click)="stopCounting()">Arrêter le compteur</button>
