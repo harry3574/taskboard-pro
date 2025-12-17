@@ -1,86 +1,102 @@
-## Séquence 3 — Lazy Loading & Composants dynamiques
 
-### Qu’est-ce que le Lazy Loading ?
+## Séquence 4 — Tests Unitaires Angular
 
-Le Lazy Loading consiste à charger certaines parties de l’application uniquement lorsqu’elles sont nécessaires, au moment où l’utilisateur navigue vers une route précise.
+### 📚 Ce que j'ai appris
 
-Dans Angular, cela se fait avec le router en utilisant `loadChildren` ou `loadComponent`.
-Cela permet de :
+#### 1. Pourquoi tester ?
 
-* réduire le temps de chargement initial,
-* améliorer les performances,
-* garder une application plus modulaire.
+* Les tests permettent de vérifier que chaque partie du code fonctionne correctement, même après des modifications ultérieures.
+* Sans tests, le risque est d’introduire des bugs invisibles, surtout dans des applications réactives comme Angular.
+* Exemple concret : j’ai vu qu’un simple oubli de valeur par défaut pour `@Input() title` dans `TaskHighlightComponent` faisait échouer le test, alors que l’app fonctionnait parfaitement avec `ng serve`.
 
-Exemple :
+#### 2. Outils utilisés
 
-```ts
-{
-  path: 'task',
-  loadChildren: () => import('./task/task.routes')
-}
+* **Jasmine** : Framework de tests pour écrire et exécuter les tests unitaires.
+* **Karma** : Test runner qui lance les tests dans un navigateur et génère les rapports.
+* **TestBed** : Permet de créer un module Angular de test pour tester des composants avec leur template, DI et cycle de vie.
+
+#### 3. Concepts clés maîtrisés
+
+* **AAA Pattern** : Arrange (préparer le contexte), Act (exécuter le code testé), Assert (vérifier le résultat).
+* **Mocks** : Objets ou services factices pour simuler des dépendances sans exécuter le vrai code.
+* **Spies** : Permettent de vérifier si une méthode a été appelée, avec quels arguments.
+* **Fixture & detectChanges()** : Fixture représente le composant monté, `detectChanges()` applique le binding Angular et déclenche les cycles de vie.
+
+#### 4. Types de tests pratiqués
+
+* ✅ Test d'une classe simple (sans Angular)
+* ✅ Test d'un service
+* ✅ Test d'un composant avec TestBed
+* ✅ Test des @Input
+* ✅ Test des @Output
+* ✅ Test du DOM
+
+#### 5. Erreurs courantes rencontrées
+
+* Oublier `detectChanges()` : le template n’est pas mis à jour → tests DOM échouent
+* `No provider for...` : Angular ne trouve pas une dépendance → solution : fournir un mock ou un provider dans TestBed
+* Tests qui dépendent les uns des autres : solution → remettre l’état initial dans `beforeEach`
+
+#### 6. Commandes importantes
+
+```bash
+ng test                    # Lancer les tests
+ng test --code-coverage    # Avec rapport de couverture
 ```
 
-Ici, la feature `task` n’est chargée que lorsque l’utilisateur visite `/task`.
+#### 7. Code Coverage atteint
+
+* Objectif : 70-80%
+* Mon résultat : ~85% sur TaskBoard Pro
+
+#### 8. Difficultés rencontrées et solutions
+
+| Difficulté                                                | Solution trouvée                                                                                       |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Tests échouaient car `@Input() title` était undefined     | Ajout d’une valeur par défaut `title: string = ''`                                                     |
+| NullInjectorError pour `ActivatedRoute` dans AppComponent | Ignoré pour tests unitaires TaskBoard, ou mock simple avec `{ provide: ActivatedRoute, useValue: {} }` |
+| Karma restait idle / 404 main.js                          | Modification de `test.ts` pour inclure tous les `.spec.ts` et relancer Karma                           |
+
+#### 9. Points à approfondir
+
+* [ ] Tests d'intégration
+* [ ] Tests E2E avec Cypress
+* [ ] Mocking avancé pour HttpClient
+* [ ] Tests de services asynchrones
 
 ---
 
-### Structuration d’une application avec `features/`
+### 🎯 Projet : Tests TaskBoard Pro
 
-Une application Angular est plus lisible et maintenable lorsqu’elle est organisée par features (fonctionnalités) plutôt que par types de fichiers.
+#### Tests implémentés
 
-Chaque feature contient :
+* [x] TaskService
 
-* ses composants,
-* ses routes,
-* ses services si nécessaire.
+  * ✅ `addTask()`
+  * ✅ `removeTask()`
+  * ✅ `tasks$` Observable
+* [x] TaskHighlight Component
 
-Exemple de structure :
+  * ✅ Affichage du titre
+  * ✅ @Input title
+  * ✅ Rendu dans le DOM
 
-```
-app/
- ├── task/
- │   ├── task.component.ts
- │   ├── task.routes.ts
- │   └── services/
- ├── about/
- │   ├── about.component.ts
- │   └── about.routes.ts
-```
+#### Résultats
 
-Cette organisation facilite le Lazy Loading et rend l’application plus évolutive.
+* **Tests réussis** : 8 / 8 (en incluant tous les tests TaskService + TaskHighlightComponent)
+* **Code coverage** : ~85%
+* **Temps d'exécution** : ~0.2 secondes par test (très rapide car tests unitaires simples)
 
 ---
 
-### Qu’est-ce qu’un composant dynamique ?
+### 💡 Réflexion personnelle
 
-Un composant dynamique est un composant qui n’est pas déclaré directement dans le HTML, mais qui est créé et affiché à la demande, via du code TypeScript.
-
-Il est utile lorsque :
-
-* l’UI dépend d’une action utilisateur,
-* le contenu à afficher n’est pas connu à l’avance,
-* on veut afficher ou remplacer dynamiquement des composants.
+Cette séquence m’a permis de comprendre la valeur des tests unitaires dans Angular et de voir comment ils peuvent éviter des régressions. Le fait de tester à la fois la logique des services et le rendu des composants m’a convaincu que les tests deviennent essentiels dès qu’une application prend de l’ampleur et devient de plus en plus complexe. Je compte appliquer cette méthodologie à tous mes futurs projets Angular pour garantir fiabilité et maintenabilité.
 
 ---
 
-### Fonctionnement de `ViewContainerRef` et `createComponent()`
+### 📚 Ressources consultées
 
-`ViewContainerRef` représente un emplacement dans la vue où Angular peut insérer dynamiquement un composant.
-
-Le fonctionnement est le suivant :
-
-1. On définit un point d’insertion dans le template avec `<ng-container>`
-2. On récupère ce conteneur avec `@ViewChild`
-3. On crée le composant dynamiquement avec `createComponent()`
-
-Exemple simplifié :
-
-```ts
-@ViewChild('container', { read: ViewContainerRef })
-container!: ViewContainerRef;
-
-this.container.clear();
-this.container.createComponent(TaskHighlightComponent);
-```
-
-Cela permet de contrôler dynamiquement l’affichage des composants directement depuis le code.
+* [Angular Testing Guide](https://angular.io/guide/testing)
+* [Jasmine Documentation](https://jasmine.github.io/)
+* [Notes de cours - Séquence 4]
