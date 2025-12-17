@@ -8,8 +8,17 @@
 </ul>
 
 <div class="input-group mb-3">
-  <input type="text" [(ngModel)]="newTaskTitle" placeholder="Nouvelle tâche" class="form-control" />
-  <button (click)="addTask()" class="btn btn-primary">Ajouter</button>
+  <input
+    #taskInput
+    type="text"
+    placeholder="Nouvelle tâche"
+    (keyup.enter)="addTask(taskInput.value); taskInput.value=''"
+  />
+
+  <button
+    (click)="addTask(taskInput.value); taskInput.value=''">
+    Ajouter
+  </button>
 </div>
 
 <hr>

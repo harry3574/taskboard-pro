@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { AboutComponent } from './about.component';
 
 export default [
   {
     path: '',
-    component: AboutComponent
+    loadComponent: () =>
+      import('./about.component').then(m => m.AboutComponent)
   }
 ] as Routes;

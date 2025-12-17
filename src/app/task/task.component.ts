@@ -17,10 +17,9 @@ export class TaskComponent implements OnInit, OnDestroy {
   tasks$ = this.taskService.tasks$;
   newTaskTitle = '';
 
-  addTask() {
-    if (this.newTaskTitle.trim()) {
-      this.taskService.addTask(this.newTaskTitle.trim());
-      this.newTaskTitle = '';
+  addTask(title: string) {
+    if (title.trim()) {
+      this.taskService.addTask(title.trim());
     }
   }
 

@@ -10,10 +10,9 @@ export const routes: Routes = [
     path: 'task',
     loadChildren: () => import('./task/task.routes')
   },
-
   {
     path: 'about',
-    loadComponent: () =>
-      import('./about/about.component').then(m => m.AboutComponent)
+    loadChildren: () => import('./about/about.routes')
   }
 ];
+
