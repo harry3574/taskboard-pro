@@ -15,4 +15,6 @@ import { TaskHighlightComponent } from './component/tasks-page/task-highlight.co
     RouterLinkActive
   ]
 })
-export class AppComponent {}
+export class AppComponent {
+  title = 'TaskBoard-Pro';
+}

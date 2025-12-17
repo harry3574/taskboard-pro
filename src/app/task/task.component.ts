@@ -10,7 +10,7 @@ import { AfterViewInit, ViewChild, ViewContainerRef } from '@angular/core';
 @Component({
   selector: 'app-task',
   standalone: true,
-  imports: [CommonModule, FormsModule, TaskHighlightComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './task.component.html',
   styleUrls: ['./task.component.css']
 })

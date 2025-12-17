@@ -19,6 +19,7 @@ import { CommonModule } from '@angular/common';
     }
   `]
 })
+
 export class TaskHighlightComponent {
-  @Input() title!: string;
+  @Input() title: string = '';
 }
